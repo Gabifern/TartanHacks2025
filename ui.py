@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
+from PyQt5.QtWidgets import QPalette, QColor, QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
 
 # Demo user database (username -> (password, role))
 demo_users = {
@@ -22,6 +22,7 @@ class LoginApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        
 
     def initUI(self):
         self.setWindowTitle("Login Form")
@@ -46,6 +47,7 @@ class LoginApp(QWidget):
         layout.addWidget(self.login_btn)
 
         self.setLayout(layout)
+
 
     def check_login(self):
         username = self.username_input.text()
@@ -151,9 +153,12 @@ class VideoLibrary(QWidget):
         layout.addWidget(self.video_list)
 
         self.setLayout(layout)
-
+    
 if __name__ == "__main__":
     app = QApplication([])
+    palette=QPalette()
+    palette.setColor(QPalette.Window, QColor(30, 30, 30))  
+
     window = LoginApp()
     window.show()
     app.exec()
