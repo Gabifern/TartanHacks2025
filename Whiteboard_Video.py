@@ -100,7 +100,7 @@ def getWBForeground(whiteboard, bg_whiteboard):
     #blurred_mask = cv2.GaussianBlur(difference, (5, 5), 0)
 
     # Apply thresholding to highlight differences
-    _, thresholded = cv2.threshold(difference, 10, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
+    _, thresholded = cv2.threshold(difference, 15, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
 
 
     #this is a little high
@@ -207,9 +207,9 @@ if __name__ == "__main__":
         #last minute test job
         x, y, w, h = bufferArea
 
-        cv2.rectangle(display_final, (x, y), (x + w, y + h), 255, thickness=4)
+        cv2.rectangle(display_final, (x, y), (x + w, y + h), (0,255,0), thickness=4)
 
-        out.write(frame) 
+        out.write(display_final) 
 
         cv2.imshow("Camera Feed", display_final)
 
