@@ -12,7 +12,7 @@ def getWhiteboard(image):
     """
     Image is cv2.imread object
     """
-    # gaussian_kernel = (5, 5)
+    gaussian_kernel = (5, 5)
     # start by getting the whiteboard as a mask
 
 
@@ -27,8 +27,10 @@ def getWhiteboard(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Define color range (example: detecting blue)
-    lower_bound = np.array([0, 0, 175])  # Lower HSV threshold
-    upper_bound = np.array([255, 30, 255]) # Upper HSV threshold
+    lower_bound = np.array([0, 0, 100])  # Lower HSV threshold
+    upper_bound = np.array([255, 100, 255]) # Upper HSV threshold
+
+    hsv = cv2.GaussianBlur(hsv, gaussian_kernel, 0)
 
     # Create mask
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
@@ -68,7 +70,9 @@ def getWhiteboard(image):
         #filled_mask = cv2.drawContours(filled_mask, [largest_contour], -1, 255, thickness=cv2.FILLED)
         cv2.rectangle(filled_mask, (x, y), (x + w, y + h), 255, thickness=cv2.FILLED)
 
-    return whiteboard, [x,y,w,h]
+        return whiteboard, [x,y,w,h]
+    print("no whiteboard, showing frame")
+    return image, -1
 
 def getWBForeground(whiteboard, bg_whiteboard):
     """
@@ -93,13 +97,13 @@ def getWBForeground(whiteboard, bg_whiteboard):
     #blurred_mask = cv2.GaussianBlur(difference, (5, 5), 0)
 
     # Apply thresholding to highlight differences
-    _, thresholded = cv2.threshold(difference, 30, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
+    _, thresholded = cv2.threshold(difference, 10, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
 
 
     #this is a little high
-    kernel = np.ones((6, 6), np.uint8)
-    thresholded = cv2.morphologyEx(thresholded, cv2.MORPH_CLOSE, kernel)
-    thresholded = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, kernel)  # Remove small noise
+    # kernel = np.ones((6, 6), np.uint8)
+    # thresholded = cv2.morphologyEx(thresholded, cv2.MORPH_CLOSE, kernel)
+    # thresholded = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, kernel)  # Remove small noise
 
     # FINDING AND IGNORING SMALL WIDTH OBJECTS
 
@@ -160,13 +164,14 @@ if __name__ == "__main__":
     
     cap = cv2.VideoCapture(0)
     bg_whiteboard= None
+    
     while True:
         ret, frame = cap.read()  # Capture frame
         if not ret:
             break
 
         if bg_whiteboard is None:
-            bg_whiteboard, _ = getWhiteboard(frame)
+            bg_whiteboard, bufferArea = getWhiteboard(frame)
             continue
 
         #BUFFERAREA IS AREA CUTOUT FROM OG IMAGE
@@ -176,10 +181,18 @@ if __name__ == "__main__":
             print("No whiteboard")
             continue
         
+        if bufferArea == -1:
+            continue
+
         fg_mask = getWBForeground(bufferIm, bg_whiteboard)
         display_wb = replaceFG(fg_mask,bg_whiteboard,bufferIm)
         bg_whiteboard = display_wb
         display_final = reattachBG(frame, bg_whiteboard, bufferArea)
+
+        #last minute test job
+        x, y, w, h = bufferArea
+
+        cv2.rectangle(display_final, (x, y), (x + w, y + h), 255, thickness=4)
 
         cv2.imshow("Camera Feed", display_final)
 
