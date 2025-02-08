@@ -23,10 +23,10 @@ class LoginApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        
 
     def initUI(self):
         self.setWindowTitle("Login Form")
+        self.resize(600, 400)
 
         # Layout
         layout = QVBoxLayout()
@@ -34,21 +34,23 @@ class LoginApp(QWidget):
         # Username input
         layout.addWidget(QLabel("Username:"))
         self.username_input = QLineEdit()
+        self.username_input.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable input
         layout.addWidget(self.username_input)
 
         # Password input
         layout.addWidget(QLabel("Password:"))
         self.password_input = QLineEdit()
-        self.password_input.setEchoMode(QLineEdit.Password)  # Hide password input
+        self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable input
         layout.addWidget(self.password_input)
 
         # Login Button
         self.login_btn = QPushButton("Login")
+        self.login_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
         self.login_btn.clicked.connect(self.check_login)
         layout.addWidget(self.login_btn)
 
         self.setLayout(layout)
-
 
     def check_login(self):
         username = self.username_input.text()
@@ -74,15 +76,20 @@ class TeacherDashboard(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Teacher Dashboard")
+        self.resize(800, 600)
 
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Welcome, Teacher!"))
 
-        # Buttons
+        # Buttons with resizing
         self.view_student_interface_btn = QPushButton("View Student Interface")
+        self.view_student_interface_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
         self.record_video_btn = QPushButton("Record New Video")
+        self.record_video_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
         self.view_published_videos_btn = QPushButton("View Published Videos")
+        self.view_published_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
         self.view_unpublished_videos_btn = QPushButton("View Unpublished Video Library")
+        self.view_unpublished_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
 
         # Connect buttons
         self.view_student_interface_btn.clicked.connect(self.view_student_interface)
@@ -117,17 +124,20 @@ class StudentDashboard(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Dashboard")
-        
+        self.resize(800, 600)
+
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Available Recordings:"))
 
         # List of published videos
         self.recordings_list = QListWidget()
+        self.recordings_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # Resizable list widget
         self.recordings_list.addItems(published_videos)
         layout.addWidget(self.recordings_list)
 
-        # Watch button
+        # Watch button with resizing
         self.watch_button = QPushButton("Watch Recording")
+        self.watch_button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
         self.watch_button.clicked.connect(self.watch_recording)
         layout.addWidget(self.watch_button)
 
@@ -148,18 +158,25 @@ class VideoLibrary(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(QLabel(title))
 
-        # List of videos
+        # List of videos with resizing
         self.video_list = QListWidget()
+        self.video_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # Resizable list widget
         self.video_list.addItems(videos)
         layout.addWidget(self.video_list)
 
         self.setLayout(layout)
-    
-if __name__ == "__main__":
-    app = QApplication([])
-    palette=QPalette()
-    palette.setColor(QPalette.Window, QColor(30, 30, 30))  
 
+if __name__ == "__main__":
+    from PyQt5.QtWidgets import QSizePolicy
+
+    app = QApplication([])
+
+    # Set the application's palette for the background color
+    palette = QPalette()
+    palette.setColor(QPalette.Window, QColor("#beebee"))
+    app.setPalette(palette)
+
+    # Start the login window
     window = LoginApp()
     window.show()
     app.exec()
