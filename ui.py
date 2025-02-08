@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
 
 # Demo user database (username -> (password, role))
 demo_users = {
@@ -7,6 +7,14 @@ demo_users = {
     "mrsmith": ("teach2025", "teacher"),
     "student1": ("studypass", "student"),
 }
+
+# Sample recordings available to students
+available_recordings = [
+    "Lesson 1 - Introduction to Python",
+    "Lesson 2 - Data Structures",
+    "Lesson 3 - Object-Oriented Programming",
+    "Lesson 4 - Web Development Basics",
+]
 
 class LoginApp(QWidget):
     def __init__(self):
@@ -69,9 +77,28 @@ class StudentDashboard(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Student Dashboard")
+        
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Welcome, Student!"))
+        layout.addWidget(QLabel("Available Recordings:"))
+
+        # List of recordings
+        self.recordings_list = QListWidget()
+        self.recordings_list.addItems(available_recordings)
+        layout.addWidget(self.recordings_list)
+
+        # Watch button
+        self.watch_button = QPushButton("Watch Recording")
+        self.watch_button.clicked.connect(self.watch_recording)
+        layout.addWidget(self.watch_button)
+
         self.setLayout(layout)
+
+    def watch_recording(self):
+        selected_item = self.recordings_list.currentItem()
+        if selected_item:
+            QMessageBox.information(self, "Now Playing", f"You are watching: {selected_item.text()}")
+        else:
+            QMessageBox.warning(self, "No Selection", "Please select a recording to watch.")
 
 if __name__ == "__main__":
     app = QApplication([])
