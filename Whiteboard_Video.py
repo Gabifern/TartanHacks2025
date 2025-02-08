@@ -1,8 +1,8 @@
 import cv2
-import sys 
 import numpy as np
-import os 
-from datetime import datetime 
+import os
+import sys
+from datetime import datetime
 
 def main():
     """
@@ -165,22 +165,21 @@ def reattachBG(image, whiteboard, area):
 
 if __name__ == "__main__":
     
-    cap = cv2.VideoCapture(0)
-  #  bg_whiteboard= None
-   # save_folder = "unpublished_videos"  # Directory to save images
-    #if not os.path.exists(save_folder):
-     #   os.makedirs(save_folder)
     bg_whiteboard= None
-    save_folder = "unpublished_videos"
-    
-    if not os.path.exists(save_folder):
-        os.makedirs(save_folder)
+    save_folder=sys.argv[1] if len(sys.argv)>1 else "unpublished videos"
+    os.makedirs(save_folder, exist_ok=True)
+    #timestamp = time.strftime("%Y%m%d_%H%M%S")
+    #output_filename = f"recording_{timestamp}.avi"  # Unique file name
+    filename=os.path.join(save_folder, f"recording_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4")
+    cap = cv2.VideoCapture(0)  # Start video capture
 
-    # VideoWriter setup
-    video_filename = os.path.join(save_folder, f"recording_{datetime.now().strftime('%Y%m%d_%H%M%S')}.avi")
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Codec for AVI format
-    frame_rate = 20  # FPS
-    video_writer = cv2.VideoWriter(video_filename, fourcc, frame_rate, (640, 480))
+    if not cap.isOpened():
+        print("Unable to access the camera.")
+
+    # Define the codec and create a VideoWriter object to save the video
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Codec (use 'XVID' for .avi format)
+    out = cv2.VideoWriter(filename, fourcc, 20.0, (640, 480))  # Output file name, codec, FPS, frame size
+
     while True:
         ret, frame = cap.read()  # Capture frame
         if not ret:
@@ -210,12 +209,15 @@ if __name__ == "__main__":
 
         cv2.rectangle(display_final, (x, y), (x + w, y + h), 255, thickness=4)
 
+        out.write(frame) 
+
         cv2.imshow("Camera Feed", display_final)
 
     # Press 'q' to exit
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+    out.release()
     cap.release()  # Release the camera
     cv2.destroyAllWindows()  # Close OpenCV windows
 
