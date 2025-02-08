@@ -1,8 +1,11 @@
+import os
 import subprocess
 import sys
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
 from PyQt5.QtGui import QPalette, QColor
-import os 
+from PyQt5.QtMultimediaWidgets import QVideoWidget
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtCore import QUrl
 # Demo user database (username -> (password, role))
 demo_users = {
     "admin": ("password123", "teacher"),
@@ -20,6 +23,7 @@ unpublished_videos = [
     "Lesson 3 - Object-Oriented Programming (Draft)",
     "Lesson 4 - Web Development Basics (Draft)",
 ]
+unpublished_video_path = "unpublished_videos"
 
 class LoginApp(QWidget):
     def __init__(self):
@@ -126,6 +130,7 @@ class TeacherDashboard(QWidget):
         self.video_library.show()
 
     def view_unpublished_videos(self):
+        unpublished_videos = os.listdir("unpublished_videos")
         self.video_library = VideoLibrary("Unpublished Videos", unpublished_videos)
         self.video_library.show()
     
@@ -163,20 +168,54 @@ class StudentDashboard(QWidget):
             QMessageBox.warning(self, "No Selection", "Please select a recording to watch.")
 
 class VideoLibrary(QWidget):
-    def __init__(self, title, videos):
+    def __init__(self, title, videos, path=""):
         super().__init__()
         self.setWindowTitle(title)
+        self.path = path
+        self.videos = videos
+        
         layout = QVBoxLayout()
         layout.addWidget(QLabel(title))
 
         # List of videos with resizing
         self.video_list = QListWidget()
-        self.video_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # Resizable list widget
         self.video_list.addItems(videos)
         layout.addWidget(self.video_list)
 
+        # Add Watch Video button
+        self.watch_button = QPushButton("Watch Video")
+        self.watch_button.clicked.connect(self.watch_video)
+        layout.addWidget(self.watch_button)
+        
         self.setLayout(layout)
 
+
+    def watch_video(self):
+        selected_item = self.video_list.currentItem()
+        if selected_item:
+            video_file = selected_item.text().strip()
+            video_path = os.path.abspath(os.path.join(self.path, "unpublished_videos", video_file))
+
+            if os.path.exists(video_path):
+                self.play_video(video_path)
+            else:
+                QMessageBox.warning(self, "Error", f"Video file not found: {video_path}")  # Debugging
+        else:
+            QMessageBox.warning(self, "No Selection", "Please select a video")
+
+    def play_video(self, video_path):
+        if os.path.exists(video_path):
+            try:
+                if sys.platform.startswith("win"):
+                    os.startfile(video_path)  # Opens in Windows default media player
+                elif sys.platform.startswith("darwin"):  # macOS
+                    subprocess.run(["open", video_path])
+                else:  # Linux
+                    subprocess.run(["xdg-open", video_path])
+            except Exception as e:
+                QMessageBox.warning(self, "Error", f"Could not open video: {str(e)}")
+        else:
+            QMessageBox.warning(self, "Error", f"Video file not found: {video_path}")
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QSizePolicy
