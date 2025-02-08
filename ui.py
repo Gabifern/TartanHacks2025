@@ -126,7 +126,7 @@ class TeacherDashboard(QWidget):
     def view_unpublished_videos(self):
         self.video_library = VideoLibrary("Unpublished Videos", unpublished_videos)
         self.video_library.show()
-    
+
 
 
 
