@@ -49,6 +49,10 @@ if contours:
     x, y, w, h = cv2.boundingRect(largest_contour)
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+    whiteboard = image[y:y+h, x:x+w]
+    cv2.imwrite("whiteboard_extracted.jpg", whiteboard)
+    cv2.imshow("Extracted Whiteboard", whiteboard)
+    
     filled_mask = mask.copy()
     #filled_mask = cv2.drawContours(filled_mask, [largest_contour], -1, 255, thickness=cv2.FILLED)
     cv2.rectangle(filled_mask, (x, y), (x + w, y + h), 255, thickness=cv2.FILLED)
