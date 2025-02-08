@@ -12,7 +12,7 @@ gaussian_kernel = (5, 5)
 
 
 # Load image
-image = cv2.imread('../hand.jpg')
+image = cv2.imread('test_images/IMG_1890.jpg')
 # bg_whiteboard is our buffer image
 bg_whiteboard = cv2.imread('Background2.jpg')
 print("image")
@@ -87,10 +87,10 @@ difference = cv2.absdiff(bg_whiteboard, whiteboard)
 
 difference = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
 
-blurred_mask = cv2.GaussianBlur(difference, (5, 5), 0)
+#blurred_mask = cv2.GaussianBlur(difference, (5, 5), 0)
 
 # Apply thresholding to highlight differences
-_, thresholded = cv2.threshold(blurred_mask, 50, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
+_, thresholded = cv2.threshold(difference, 30, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
 
 
 #this is a little high
@@ -122,12 +122,15 @@ for contour in contours:
 
 
 #Display the results
-cv2.imshow("Difference", difference)
-cv2.imshow("Thresholded Difference", filtered_mask)
+#cv2.imshow("Difference", difference)
+#cv2.imshow("Thresholded Difference", filtered_mask)
 
 """
 
 PART 3: Overlaying buffer
+Image 2: Foreground with mask, Image 1: Background/Buffer
+
+Replacing mask area of image 2 with original area from image 1
 
 """
 # Ensure the images and mask have the same size
@@ -135,22 +138,24 @@ PART 3: Overlaying buffer
 #     print("All inputs must have the same dimensions!")
 #     exit()
 
+mask1 = filtered_mask.copy()
 # Extract the region from image1 using the mask
-region_from_image1 = cv2.bitwise_and(bg_whiteboard, bg_whiteboard, mask=filtered_mask)
+region_from_image1 = cv2.bitwise_and(bg_whiteboard, bg_whiteboard, mask=mask1)
 
-if filtered_mask.shape[:2] != bg_whiteboard.shape[:2]:
-    filtered_mask = cv2.resize(filtered_mask, (bg_whiteboard.shape[1], bg_whiteboard.shape[0]))
+# if filtered_mask.shape[:2] != bg_whiteboard.shape[:2]:
+#     filtered_mask = cv2.resize(filtered_mask, (bg_whiteboard.shape[1], bg_whiteboard.shape[0]))
 
-_, filtered_mask = cv2.threshold(filtered_mask, 1, 255, cv2.THRESH_BINARY)
+#_, bmask = cv2.threshold(mask1, 1, 255, cv2.THRESH_BINARY)
 
 # Invert the mask to black-out the area on image2
-inverted_mask = cv2.bitwise_not(filtered_mask)
-image2_background = cv2.bitwise_and(image, image, mask=inverted_mask)
+inverted_mask = cv2.bitwise_not(mask1)
+image2_background = cv2.bitwise_and(whiteboard, whiteboard, mask=inverted_mask)
 
+#cv2.imshow("i2bg", image2_background)
 # Combine the region from image1 with the background from image2
 result = cv2.add(image2_background, region_from_image1)
 
-#cv2.imshow("Result", result)
+cv2.imshow("Result", result)
 
 # CHRISTIAN EDGE DETECTION
 #edges = cv2.Canny(whiteboard,100,200)
