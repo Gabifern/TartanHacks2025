@@ -8,12 +8,14 @@ demo_users = {
     "student1": ("studypass", "student"),
 }
 
-# Sample recordings available to students
-available_recordings = [
+# Video storage
+published_videos = [
     "Lesson 1 - Introduction to Python",
     "Lesson 2 - Data Structures",
-    "Lesson 3 - Object-Oriented Programming",
-    "Lesson 4 - Web Development Basics",
+]
+unpublished_videos = [
+    "Lesson 3 - Object-Oriented Programming (Draft)",
+    "Lesson 4 - Web Development Basics (Draft)",
 ]
 
 class LoginApp(QWidget):
@@ -69,9 +71,44 @@ class TeacherDashboard(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Teacher Dashboard")
+
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Welcome, Teacher!"))
+
+        # Buttons
+        self.view_student_interface_btn = QPushButton("View Student Interface")
+        self.record_video_btn = QPushButton("Record New Video")
+        self.view_published_videos_btn = QPushButton("View Published Videos")
+        self.view_unpublished_videos_btn = QPushButton("View Unpublished Video Library")
+
+        # Connect buttons
+        self.view_student_interface_btn.clicked.connect(self.view_student_interface)
+        self.record_video_btn.clicked.connect(self.record_video)
+        self.view_published_videos_btn.clicked.connect(self.view_published_videos)
+        self.view_unpublished_videos_btn.clicked.connect(self.view_unpublished_videos)
+
+        # Add buttons to layout
+        layout.addWidget(self.view_student_interface_btn)
+        layout.addWidget(self.record_video_btn)
+        layout.addWidget(self.view_published_videos_btn)
+        layout.addWidget(self.view_unpublished_videos_btn)
+
         self.setLayout(layout)
+
+    def view_student_interface(self):
+        self.student_dashboard = StudentDashboard()
+        self.student_dashboard.show()
+
+    def record_video(self):
+        QMessageBox.information(self, "Recording", "Recording functionality will be implemented.")
+
+    def view_published_videos(self):
+        self.video_library = VideoLibrary("Published Videos", published_videos)
+        self.video_library.show()
+
+    def view_unpublished_videos(self):
+        self.video_library = VideoLibrary("Unpublished Videos", unpublished_videos)
+        self.video_library.show()
 
 class StudentDashboard(QWidget):
     def __init__(self):
@@ -81,9 +118,9 @@ class StudentDashboard(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Available Recordings:"))
 
-        # List of recordings
+        # List of published videos
         self.recordings_list = QListWidget()
-        self.recordings_list.addItems(available_recordings)
+        self.recordings_list.addItems(published_videos)
         layout.addWidget(self.recordings_list)
 
         # Watch button
@@ -99,6 +136,21 @@ class StudentDashboard(QWidget):
             QMessageBox.information(self, "Now Playing", f"You are watching: {selected_item.text()}")
         else:
             QMessageBox.warning(self, "No Selection", "Please select a recording to watch.")
+
+class VideoLibrary(QWidget):
+    def __init__(self, title, videos):
+        super().__init__()
+        self.setWindowTitle(title)
+
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(title))
+
+        # List of videos
+        self.video_list = QListWidget()
+        self.video_list.addItems(videos)
+        layout.addWidget(self.video_list)
+
+        self.setLayout(layout)
 
 if __name__ == "__main__":
     app = QApplication([])
