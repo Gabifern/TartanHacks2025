@@ -92,21 +92,21 @@ class TeacherDashboard(QWidget):
         self.view_student_interface_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
         self.record_video_btn = QPushButton("Record New Video")
         self.record_video_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
-        self.view_published_videos_btn = QPushButton("View Published Videos")
-        self.view_published_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
-        self.view_unpublished_videos_btn = QPushButton("View Unpublished Video Library")
+       # self.view_published_videos_btn = QPushButton("View Published Videos")
+       # self.view_published_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
+        self.view_unpublished_videos_btn = QPushButton("View Video Library")
         self.view_unpublished_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
 
         # Connect buttons
         self.view_student_interface_btn.clicked.connect(self.view_student_interface)
         self.record_video_btn.clicked.connect(self.record_video)
-        self.view_published_videos_btn.clicked.connect(self.view_published_videos)
+        # self.view_published_videos_btn.clicked.connect(self.view_published_videos)
         self.view_unpublished_videos_btn.clicked.connect(self.view_unpublished_videos)
 
         # Add buttons to layout
         layout.addWidget(self.view_student_interface_btn)
         layout.addWidget(self.record_video_btn)
-        layout.addWidget(self.view_published_videos_btn)
+        #layout.addWidget(self.view_published_videos_btn)
         layout.addWidget(self.view_unpublished_videos_btn)
 
         self.setLayout(layout)
@@ -121,17 +121,17 @@ class TeacherDashboard(QWidget):
         os.makedirs(save_folder, exist_ok=True)
         try:
             # Start the recording process
-            subprocess.Popen([sys.executable, 'camera.py', save_folder])
+            subprocess.Popen([sys.executable, 'Whiteboard_Video.py', save_folder])
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to start camera: {e}")
 
-    def view_published_videos(self):
-        self.video_library = VideoLibrary("Published Videos", published_videos)
-        self.video_library.show()
+  #  def view_published_videos(self):
+   #     self.video_library = VideoLibrary("Published Videos", published_videos)
+   #     self.video_library.show()
 
     def view_unpublished_videos(self):
         unpublished_videos = os.listdir("unpublished_videos")
-        self.video_library = VideoLibrary("Unpublished Videos", unpublished_videos)
+        self.video_library = VideoLibrary("Videos", unpublished_videos)
         self.video_library.show()
     
 
@@ -146,10 +146,11 @@ class StudentDashboard(QWidget):
         layout = QVBoxLayout()
         layout.addWidget(QLabel("Available Recordings:"))
 
-        # List of published videos
+        # List of unpublished videos directly displayed on the dashboard
         self.recordings_list = QListWidget()
         self.recordings_list.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)  # Resizable list widget
-        self.recordings_list.addItems(published_videos)
+        unpublished_videos = os.listdir("unpublished_videos")  # List unpublished videos from directory
+        self.recordings_list.addItems(unpublished_videos)
         layout.addWidget(self.recordings_list)
 
         # Watch button with resizing
@@ -161,11 +162,32 @@ class StudentDashboard(QWidget):
         self.setLayout(layout)
 
     def watch_recording(self):
-        selected_item = self.recordings_list.currentItem()
+        selected_item = self.recordings_list.currentItem()  # Corrected to use recordings_list
         if selected_item:
-            QMessageBox.information(self, "Now Playing", f"You are watching: {selected_item.text()}")
+            video_file = selected_item.text().strip()
+            video_path = os.path.abspath(os.path.join("unpublished_videos", video_file))  # Corrected path construction
+
+            if os.path.exists(video_path):
+                self.play_video(video_path)
+            else:
+                QMessageBox.warning(self, "Error", f"Video file not found: {video_path}")  # Debugging
         else:
-            QMessageBox.warning(self, "No Selection", "Please select a recording to watch.")
+            QMessageBox.warning(self, "No Selection", "Please select a video")
+
+    def play_video(self, video_path):
+        if os.path.exists(video_path):
+            try:
+                if sys.platform.startswith("win"):
+                    os.startfile(video_path)  # Opens in Windows default media player
+                elif sys.platform.startswith("darwin"):  # macOS
+                    subprocess.run(["open", video_path])
+                else:  # Linux
+                    subprocess.run(["xdg-open", video_path])
+            except Exception as e:
+                QMessageBox.warning(self, "Error", f"Could not open video: {str(e)}")
+        else:
+            QMessageBox.warning(self, "Error", f"Video file not found: {video_path}")
+
 
 class VideoLibrary(QWidget):
     def __init__(self, title, videos, path=""):
