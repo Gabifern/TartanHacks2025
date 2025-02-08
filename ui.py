@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
 from PyQt5.QtGui import QPalette, QColor
 
@@ -110,7 +112,12 @@ class TeacherDashboard(QWidget):
         self.student_dashboard.show()
 
     def record_video(self):
-        QMessageBox.information(self, "Recording", "Recording functionality will be implemented.")
+        # Here we call camera.py using subprocess to start recording
+        try:
+            # Start the recording process
+            subprocess.Popen([sys.executable, 'camera.py'])
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"Failed to start camera: {e}")
 
     def view_published_videos(self):
         self.video_library = VideoLibrary("Published Videos", published_videos)
@@ -119,6 +126,9 @@ class TeacherDashboard(QWidget):
     def view_unpublished_videos(self):
         self.video_library = VideoLibrary("Unpublished Videos", unpublished_videos)
         self.video_library.show()
+    
+
+
 
 class StudentDashboard(QWidget):
     def __init__(self):
@@ -165,6 +175,7 @@ class VideoLibrary(QWidget):
         layout.addWidget(self.video_list)
 
         self.setLayout(layout)
+
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QSizePolicy
