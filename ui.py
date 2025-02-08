@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QPalette, QColor, QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QVBoxLayout, QLineEdit, QMessageBox, QListWidget
+from PyQt5.QtGui import QPalette, QColor
 
 # Demo user database (username -> (password, role))
 demo_users = {
