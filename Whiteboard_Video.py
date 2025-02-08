@@ -207,9 +207,9 @@ if __name__ == "__main__":
         #last minute test job
         x, y, w, h = bufferArea
 
-        cv2.rectangle(display_final, (x, y), (x + w, y + h), 255, thickness=4)
+        cv2.rectangle(display_final, (x, y), (x + w, y + h), (0, 255,0), thickness=3)
 
-        out.write(frame) 
+        out.write(display_final) 
 
         cv2.imshow("Camera Feed", display_final)
 
