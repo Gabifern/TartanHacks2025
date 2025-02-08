@@ -32,27 +32,38 @@ class LoginApp(QWidget):
 
     def initUI(self):
         self.setWindowTitle("Login Form")
-        self.resize(600, 400)
+        self.resize(300,40)
 
         # Layout
         layout = QVBoxLayout()
 
         # Username input
-        layout.addWidget(QLabel("Username:"))
+
+        self.username_label = QLabel("Username:")
+        self.username_label.setStyleSheet("font-weight: bold;")  # Make the label text bold
+        layout.addWidget(self.username_label)
         self.username_input = QLineEdit()
         self.username_input.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable input
+        self.username_input.setFixedWidth(300)  # Set fixed width (e.g., 300 pixels)
+        self.username_input.setFixedHeight(40)  # Set fixed height (e.g., 40 pixels)
         layout.addWidget(self.username_input)
 
         # Password input
-        layout.addWidget(QLabel("Password:"))
+        self.password_label = QLabel("Password:")
+        self.password_label.setStyleSheet("font-weight: bold;")  # Make the label text bold
+        layout.addWidget(self.password_label)
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable input
+        self.password_input.setFixedWidth(300)  # Set fixed width (e.g., 300 pixels)
+        self.password_input.setFixedHeight(40)  # Set fixed height (e.g., 40 pixels)
         layout.addWidget(self.password_input)
 
         # Login Button
         self.login_btn = QPushButton("Login")
-        self.login_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
+        #self.login_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
+        self.login_btn.setFixedWidth(300)  # Set fixed width (e.g., 300 pixels)
+        self.login_btn.setFixedHeight(40)  # Set fixed height (e.g., 40 pixels)
         self.login_btn.clicked.connect(self.check_login)
         layout.addWidget(self.login_btn)
 
@@ -85,17 +96,22 @@ class TeacherDashboard(QWidget):
         self.resize(800, 600)
 
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Welcome, Teacher!"))
+        label = QLabel("Welcome, Teacher!")
+        label.setStyleSheet("font-size: 24px; font-weight: bold;")
+        layout.addWidget(label)
 
         # Buttons with resizing
         self.view_student_interface_btn = QPushButton("View Student Interface")
-        self.view_student_interface_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
+        self.view_student_interface_btn.setStyleSheet("font-size: 18px; font-weight: bold;")  # Adjust the size as needed
+        self.view_student_interface_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
         self.record_video_btn = QPushButton("Record New Video")
-        self.record_video_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
-       # self.view_published_videos_btn = QPushButton("View Published Videos")
-       # self.view_published_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
+        self.record_video_btn.setStyleSheet("font-size: 18px; font-weight: bold;")  # Adjust the size as needed
+        self.record_video_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
         self.view_unpublished_videos_btn = QPushButton("View Video Library")
-        self.view_unpublished_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)  # Resizable button
+        self.view_unpublished_videos_btn.setStyleSheet("font-size: 18px; font-weight: bold;")  # Adjust the size as needed
+        self.view_unpublished_videos_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # Connect buttons
         self.view_student_interface_btn.clicked.connect(self.view_student_interface)
@@ -193,6 +209,7 @@ class VideoLibrary(QWidget):
     def __init__(self, title, videos, path=""):
         super().__init__()
         self.setWindowTitle(title)
+        self.resize(800, 600)
         self.path = path
         self.videos = videos
         

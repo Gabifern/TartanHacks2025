@@ -1,5 +1,8 @@
 import cv2
+import sys 
 import numpy as np
+import os 
+from datetime import datetime 
 
 def main():
     """
@@ -163,8 +166,21 @@ def reattachBG(image, whiteboard, area):
 if __name__ == "__main__":
     
     cap = cv2.VideoCapture(0)
+  #  bg_whiteboard= None
+   # save_folder = "unpublished_videos"  # Directory to save images
+    #if not os.path.exists(save_folder):
+     #   os.makedirs(save_folder)
     bg_whiteboard= None
+    save_folder = "unpublished_videos"
     
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+
+    # VideoWriter setup
+    video_filename = os.path.join(save_folder, f"recording_{datetime.now().strftime('%Y%m%d_%H%M%S')}.avi")
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Codec for AVI format
+    frame_rate = 20  # FPS
+    video_writer = cv2.VideoWriter(video_filename, fourcc, frame_rate, (640, 480))
     while True:
         ret, frame = cap.read()  # Capture frame
         if not ret:
