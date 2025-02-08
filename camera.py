@@ -1,10 +1,14 @@
 import cv2
-import time
+from datetime import datetime 
+import sys 
+import os 
 
 def start_camera():
-    timestamp = time.strftime("%Y%m%d_%H%M%S")
-    output_filename = f"recording_{timestamp}.avi"  # Unique file name
-
+    save_folder=sys.argv[1] if len(sys.argv)>1 else "unpublished videos"
+    os.makedirs(save_folder, exist_ok=True)
+    #timestamp = time.strftime("%Y%m%d_%H%M%S")
+    #output_filename = f"recording_{timestamp}.avi"  # Unique file name
+    filename=os.path.join(save_folder, f"recording_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4")
     cap = cv2.VideoCapture(0)  # Start video capture
 
     if not cap.isOpened():
@@ -13,7 +17,7 @@ def start_camera():
 
     # Define the codec and create a VideoWriter object to save the video
     fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Codec (use 'XVID' for .avi format)
-    out = cv2.VideoWriter(output_filename, fourcc, 20.0, (640, 480))  # Output file name, codec, FPS, frame size
+    out = cv2.VideoWriter(filename, fourcc, 20.0, (640, 480))  # Output file name, codec, FPS, frame size
 
     count = 0
     while True:
