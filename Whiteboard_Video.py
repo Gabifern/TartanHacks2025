@@ -21,7 +21,7 @@ def getWhiteboard(image):
     # bg_whiteboard = cv2.imread('Background2.jpg')
     # print("image")
 
-    image = cv2.resize(image, (500,900))
+    #image = cv2.resize(image, (500,900))
 
     # Convert to HSV color space
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -179,9 +179,9 @@ if __name__ == "__main__":
         fg_mask = getWBForeground(bufferIm, bg_whiteboard)
         display_wb = replaceFG(fg_mask,bg_whiteboard,bufferIm)
         bg_whiteboard = display_wb
-        display_final = reattachBG(frame, display_wb, bufferArea)
+        display_final = reattachBG(frame, bg_whiteboard, bufferArea)
 
-        cv2.imshow("Camera Feed", frame)
+        cv2.imshow("Camera Feed", display_final)
 
     # Press 'q' to exit
         if cv2.waitKey(1) & 0xFF == ord('q'):
