@@ -97,7 +97,7 @@ def getWBForeground(whiteboard, bg_whiteboard):
 
     difference = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
 
-    #blurred_mask = cv2.GaussianBlur(difference, (5, 5), 0)
+    difference = cv2.GaussianBlur(difference, (5, 5), 0)
 
     # Apply thresholding to highlight differences
     _, thresholded = cv2.threshold(difference, 15, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
