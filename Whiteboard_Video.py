@@ -69,9 +69,9 @@ def getWhiteboard(image):
 
         #cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        filled_mask = mask.copy()
+        #filled_mask = mask.copy()
         #filled_mask = cv2.drawContours(filled_mask, [largest_contour], -1, 255, thickness=cv2.FILLED)
-        cv2.rectangle(filled_mask, (x, y), (x + w, y + h), 255, thickness=cv2.FILLED)
+        #cv2.rectangle(filled_mask, (x, y), (x + w, y + h), 255, thickness=cv2.FILLED)
 
         return whiteboard, [x,y,w,h]
     print("no whiteboard, showing frame")
@@ -100,7 +100,7 @@ def getWBForeground(whiteboard, bg_whiteboard):
     difference = cv2.GaussianBlur(difference, (5, 5), 0)
 
     # Apply thresholding to highlight differences
-    _, thresholded = cv2.threshold(difference, 15, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
+    _, thresholded = cv2.threshold(difference, 10, 255, cv2.THRESH_BINARY)  # Adjust the threshold value
 
 
     #this is a little high
@@ -166,7 +166,7 @@ def reattachBG(image, whiteboard, area):
 if __name__ == "__main__":
     
     bg_whiteboard= None
-    save_folder=sys.argv[1] if len(sys.argv)>1 else "unpublished videos"
+    save_folder=sys.argv[1] if len(sys.argv)>1 else "unpublished_videos"
     os.makedirs(save_folder, exist_ok=True)
     #timestamp = time.strftime("%Y%m%d_%H%M%S")
     #output_filename = f"recording_{timestamp}.avi"  # Unique file name
@@ -177,7 +177,7 @@ if __name__ == "__main__":
         print("Unable to access the camera.")
 
     # Define the codec and create a VideoWriter object to save the video
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Codec (use 'XVID' for .avi format)
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec (use 'XVID' for .avi format) #SWITCHED THIS MP4 BY DEFAULT
     out = cv2.VideoWriter(filename, fourcc, 20.0, (640, 480))  # Output file name, codec, FPS, frame size
 
     while True:
@@ -207,7 +207,7 @@ if __name__ == "__main__":
         #last minute test job
         x, y, w, h = bufferArea
 
-        cv2.rectangle(display_final, (x, y), (x + w, y + h), (0, 255,0), thickness=3)
+        #cv2.rectangle(display_final, (x, y), (x + w, y + h), (0, 255,0), thickness=3)
 
         out.write(display_final) 
 
